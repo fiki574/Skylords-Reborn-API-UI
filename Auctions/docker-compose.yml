@@ -1,0 +1,9 @@
+version: "2"
+
+services:
+  ah:
+    container_name: sr-auctions-frontend
+    image: sr-auctions-frontend:latest
+    restart: unless-stopped
+    ports:
+      - 9900:5000

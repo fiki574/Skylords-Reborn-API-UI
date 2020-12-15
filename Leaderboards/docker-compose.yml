@@ -1,0 +1,9 @@
+version: "2"
+
+services:
+  rankings:
+    container_name: sr-leaderboards-frontend
+    image: sr-leaderboards-frontend:latest
+    restart: unless-stopped
+    ports:
+      - 9901:5000

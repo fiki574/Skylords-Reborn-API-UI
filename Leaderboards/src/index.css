@@ -1,0 +1,7 @@
+.myLink a {
+  color: white;
+}
+
+.nav-tabs .nav-link.disabled {
+  color: #343a40;
+}

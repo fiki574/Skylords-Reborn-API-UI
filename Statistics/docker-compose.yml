@@ -1,0 +1,9 @@
+version: "2"
+
+services:
+  stats:
+    container_name: sr-statistics-frontend
+    image: sr-statistics-frontend:latest
+    restart: unless-stopped
+    ports:
+      - 9902:5000

@@ -1,0 +1,70 @@
+node('master') {
+    properties([
+        [
+            $class: 'BuildDiscarderProperty',
+            strategy: [
+                $class: 'LogRotator',
+                artifactDaysToKeepStr: '30',
+                artifactNumToKeepStr: '5',
+                daysToKeepStr: '30',
+                numToKeepStr: '5'
+            ]
+        ],
+        [
+            $class: 'ParametersDefinitionProperty',
+            parameterDefinitions: [
+                [
+                    $class: 'StringParameterDefinition',
+                    defaultValue: 'master',
+                    description: 'Which branch to build from?',
+                    name: 'BRANCH'
+                ]
+            ]
+        ]
+    ])
+
+    def branch = "${BRANCH}".toString().trim()
+    def ref = "refs/heads/${branch}".toString().trim()
+    def repo = 'https://github.com/fiki574/Skylords-Reborn-Api-Ui'
+
+    stage('Initialize') {
+        deleteDir()
+        sh 'git --version'
+        sh 'docker --version'
+        sh 'docker-compose --version'
+    }
+
+    stage('Checkout') {
+        checkout([
+            $class: 'GitSCM',
+            branches: [
+                [name: ref]
+            ],
+            doGenerateSubmoduleConfigurations: false,
+            extensions: [
+                [$class: 'LocalBranch', localBranch: '**'],
+                [$class: 'CleanBeforeCheckout']
+            ],
+            submoduleCfg: [],
+            userRemoteConfigs: [
+                [url: repo]
+            ]
+        ])
+    }
+
+    stage('Build') {
+        sh 'docker build -t sr-statistics-frontend ./Statistics'
+    }
+
+    stage('Deploy') {
+        if (branch.equals('master')) {
+            sh 'docker stop sr-statistics-frontend'
+            sh 'mv ./Statistics/docker-compose.yml /opt/docker/skylords/statistics/docker-compose.yml'
+            sh 'docker-compose -f /opt/docker/skylords/statistics/docker-compose.yml up -d --force-recreate'
+        }
+    }
+
+    stage('Clean') {
+        deleteDir()
+    }
+}
