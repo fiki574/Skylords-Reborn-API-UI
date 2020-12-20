@@ -3,10 +3,18 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import * as c from "../Constants";
 import PvPEntry from "./PvPEntry";
+import Alert from "./Alert";
 
 function PvP({ type }: any) {
+  const searchResults = [
+    { name: "10", value: 10 },
+    { name: "15", value: 15 },
+    { name: "20", value: 20 },
+    { name: "25", value: 25 },
+    { name: "30", value: 30 },
+  ];
+
   var resultsPerPageRef = React.createRef<any>(),
     timeRangeRef = React.createRef<any>();
 
@@ -17,6 +25,7 @@ function PvP({ type }: any) {
   const [searched, setSearched] = useState(0);
   const [page, setPage] = useState(0);
   const [usedNextOrPrev, setUsedNextOrPrev] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
   const [nextLoad, setNextLoad] = useState(0);
 
   const handleSearch = async () => {
@@ -24,15 +33,23 @@ function PvP({ type }: any) {
       `${process.env.REACT_APP_SRL_BE_ROOT_URL}/api/leaderboards/pvp-count/${type}/${timeRange}`
     );
     let json = await response.json();
-    setSearched(parseInt(json.count));
+    if (json.state && json.state === "loading") {
+      setShowAlert(true);
+    } else if (json.count) {
+      setSearched(parseInt(json.count));
+    }
 
     response = await fetch(
       `${process.env.REACT_APP_SRL_BE_ROOT_URL}/api/leaderboards/pvp/${type}/${timeRange}/${page}/${resultsPerPage}`
     );
     json = await response.json();
-    for (let i = 0; i < json.length; i++) {
-      let data = json[i];
-      addEntry(data);
+    if (json.state && json.state === "loading") {
+      setShowAlert(true);
+    } else {
+      for (let i = 0; i < json.length; i++) {
+        let data = json[i];
+        addEntry(data);
+      }
     }
     setUsedNextOrPrev(false);
   };
@@ -49,7 +66,11 @@ function PvP({ type }: any) {
           `${process.env.REACT_APP_SRL_BE_ROOT_URL}/api/next-load`
         );
         json = await response.json();
-        setNextLoad(parseInt(json.in));
+        if (json.state && json.state === "loading") {
+          setShowAlert(true);
+        } else if (json.in) {
+          setNextLoad(parseInt(json.in));
+        }
         setPage((page) => page + 1);
       } else {
         await handleSearch();
@@ -88,6 +109,7 @@ function PvP({ type }: any) {
 
   const handleNew = () => {
     resetEntries();
+    setShowAlert(false);
     setResultsPerPage(resultsPerPageRef.current.value);
     setTimeRange(timeRangeRef.current.value);
     setPage(0);
@@ -97,6 +119,7 @@ function PvP({ type }: any) {
     <div className="container">
       <div className="row">
         <div className="col-lg-12">
+          {showAlert === true ? <Alert /> : undefined}
           <Form>
             <Form.Group>
               <Form.Row>
@@ -106,12 +129,12 @@ function PvP({ type }: any) {
                   ref={resultsPerPageRef}
                   defaultValue={resultsPerPage}
                 >
-                  {Object.keys(c.searchResults).map((key) => (
+                  {Object.keys(searchResults).map((key) => (
                     <option
-                      key={c.searchResults[key as any].value}
-                      value={c.searchResults[key as any].value}
+                      key={searchResults[key as any].value}
+                      value={searchResults[key as any].value}
                     >
-                      {c.searchResults[key as any].name}
+                      {searchResults[key as any].name}
                     </option>
                   ))}
                 </Form.Control>

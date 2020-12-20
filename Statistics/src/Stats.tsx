@@ -23,16 +23,11 @@ function Stats() {
           <CountComponent url="/api/boosters" title="Unopened boosters" />
           <CountComponent url="/api/cards" title="Owned cards" />
           <CountComponent url="/api/upgrades" title="Owned card upgrades" />
-          <CountComponent url="/api/avatars" title="Owned avatars" />
           <CountComponent url="/api/decks" title="Unique decks" />
           <CountComponent url="/api/mails" title="Sent mails" />
           <CountComponent
             url="/api/transactions"
             title="Completed game transactions"
-          />
-          <CountComponent
-            url="/api/boosters/types"
-            title="Available booster types"
           />
           <CountComponent url="/api/experience" title="Total experience" />
           <CountComponent url="/api/elo" title="Total PvP ELO" />

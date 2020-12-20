@@ -6,7 +6,21 @@ Running backend application: https://leaderboards.backend.skylords.eu
 
 Backend application caches new data every 6 hours.
 
-If you receive response with body `LOADING` instead of JSON, it means that the backend is in process of caching new data. It should not last longer than 10 minutes.
+## General responses
+
+- Response when the backend is in process of caching new data:
+```json
+{
+  "state": "loading"
+}
+```
+
+- Response when the backend is unable to process a request:
+```json
+{
+  "state": "invalid"
+}
+```
 
 ## GET `/api/next-load`
 
@@ -79,6 +93,12 @@ If you receive response with body `LOADING` instead of JSON, it means that the b
 ```json
 {
   "count": 200
+}
+```
+- Example response when the backend is caching new data:
+```json
+{
+  "state": "loading"
 }
 ```
 

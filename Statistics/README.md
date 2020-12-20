@@ -148,16 +148,6 @@ To retrieve statistics from the test server rather than the production one, appe
 }
 ```
 
-## GET `/api/boosters/types`
-
-- Retrieves number of available booster types (editions)
-- Example response:
-```json
-{
-  "count": 11
-}
-```
-
 ## GET `/api/mails`
 
 - Retrieves number of sent in-game mails
@@ -185,16 +175,6 @@ To retrieve statistics from the test server rather than the production one, appe
 ```json
 {
   "count": 5160698
-}
-```
-
-## GET `/api/avatars`
-
-- Retrieves number of avatars bought by all players
-- Example response:
-```json
-{
-  "count": 1558
 }
 ```
 

@@ -3,10 +3,18 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import * as c from "../Constants";
 import PvEEntry from "./PvEEntry";
+import Alert from "./Alert";
 
 function PvE({ type }: any) {
+  const searchResults = [
+    { name: "10", value: 10 },
+    { name: "15", value: 15 },
+    { name: "20", value: 20 },
+    { name: "25", value: 25 },
+    { name: "30", value: 30 },
+  ];
+
   var playerCounts = [] as Object[],
     defMap = 0;
   if (type === 1) {
@@ -44,6 +52,7 @@ function PvE({ type }: any) {
   const [searched, setSearched] = useState(0);
   const [page, setPage] = useState(0);
   const [usedNextOrPrev, setUsedNextOrPrev] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
   const [nextLoad, setNextLoad] = useState(0);
 
   const handleSearch = async () => {
@@ -55,7 +64,11 @@ function PvE({ type }: any) {
       }/${timeRange}`
     );
     let json = await response.json();
-    setSearched(parseInt(json.count));
+    if (json.state && json.state === "loading") {
+      setShowAlert((showAlert) => (showAlert = true));
+    } else if (json.count) {
+      setSearched(parseInt(json.count));
+    }
 
     response = await fetch(
       `${process.env.REACT_APP_SRL_BE_ROOT_URL}/api/leaderboards/pve/${type}/${
@@ -63,9 +76,13 @@ function PvE({ type }: any) {
       }/${map === 0 ? defMap : map}/${timeRange}/${page}/${resultsPerPage}`
     );
     json = await response.json();
-    for (let i = 0; i < json.length; i++) {
-      let data = json[i];
-      addEntry(data);
+    if (json.state && json.state === "loading") {
+      setShowAlert(true);
+    } else {
+      for (let i = 0; i < json.length; i++) {
+        let data = json[i];
+        addEntry(data);
+      }
     }
     setUsedNextOrPrev(false);
   };
@@ -82,7 +99,11 @@ function PvE({ type }: any) {
           `${process.env.REACT_APP_SRL_BE_ROOT_URL}/api/next-load`
         );
         json = await response.json();
-        setNextLoad(parseInt(json.in));
+        if (json.state && json.state === "loading") {
+          setShowAlert(true);
+        } else if (json.in) {
+          setNextLoad(parseInt(json.in));
+        }
         response = await fetch(
           `${process.env.REACT_APP_SRL_BE_ROOT_URL}/api/difficulties`
         );
@@ -143,6 +164,7 @@ function PvE({ type }: any) {
 
   const handleNew = () => {
     resetEntries();
+    setShowAlert(false);
     setResultsPerPage(resultsPerPageRef.current.value);
     setTimeRange(timeRangeRef.current.value);
     setPlayer(playerCountRef.current.value);
@@ -154,6 +176,7 @@ function PvE({ type }: any) {
     <div className="container">
       <div className="row">
         <div className="col-lg-12">
+          {showAlert === true ? <Alert /> : undefined}
           <Form>
             <Form.Group>
               <Form.Row>
@@ -163,12 +186,12 @@ function PvE({ type }: any) {
                   ref={resultsPerPageRef}
                   defaultValue={resultsPerPage}
                 >
-                  {Object.keys(c.searchResults).map((key) => (
+                  {Object.keys(searchResults).map((key) => (
                     <option
-                      key={c.searchResults[key as any].value}
-                      value={c.searchResults[key as any].value}
+                      key={searchResults[key as any].value}
+                      value={searchResults[key as any].value}
                     >
-                      {c.searchResults[key as any].name}
+                      {searchResults[key as any].name}
                     </option>
                   ))}
                 </Form.Control>

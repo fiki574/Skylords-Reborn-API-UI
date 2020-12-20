@@ -25,7 +25,7 @@ node('master') {
 
     def branch = "${BRANCH}".toString().trim()
     def ref = "refs/heads/${branch}".toString().trim()
-    def repo = 'https://github.com/fiki574/Skylords-Reborn-Api-Ui'
+    def repo = 'https://github.com/fiki574/Skylords-Reborn-API-UI'
 
     stage('Initialize') {
         deleteDir()
