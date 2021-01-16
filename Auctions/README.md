@@ -6,6 +6,11 @@ Running backend application: https://auctions.backend.skylords.eu
 
 Backend application caches new data every 10 minutes.
 
+## GET `/api/auctions/export`
+
+- Exports all auctions to a CSV file
+- Caches new entries every 2 minutes
+
 ## POST `/api/auctions/count`
 
 - Retrieves total number of auctions per searched terms
@@ -93,6 +98,7 @@ Backend application caches new data every 10 minutes.
   "frostOrbs": 1,
   "natureOrbs": 0,
   "shadowOrbs": 0,
-  "neutralOrbs": 0
+  "neutralOrbs": 0,
+  "cardType": "Frost"
 }
 ```

@@ -120,6 +120,22 @@ function Auctions() {
     setUsedNextOrPrev(false);
   };
 
+  const handleExport = async () => {
+    let response = await fetch(
+      `${process.env.REACT_APP_SRA_BE_ROOT_URL}/api/auctions/export`
+    );
+    let csvText = await response.text();
+    const element = document.createElement("a");
+    const file = new Blob([csvText], {
+      type: "text/csv",
+    });
+    element.href = URL.createObjectURL(file);
+    element.download = `sr-auctions-export.csv`;
+    document.body.appendChild(element);
+    element.click();
+    element.remove();
+  };
+
   return (
     <div className="container">
       <div className="row">
@@ -170,9 +186,18 @@ function Auctions() {
                 </Col>
                 <Col>
                   <Form.Label>Action:</Form.Label>
-                  <Button variant="secondary" block onClick={handleNew}>
-                    Search
-                  </Button>
+                  <Form.Row>
+                    <Col>
+                      <Button variant="secondary" block onClick={handleNew}>
+                        Search
+                      </Button>
+                    </Col>
+                    <Col>
+                      <Button variant="secondary" block onClick={handleExport}>
+                        Export
+                      </Button>
+                    </Col>
+                  </Form.Row>
                 </Col>
               </Form.Row>
             </Form.Group>
