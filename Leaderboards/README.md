@@ -1,6 +1,6 @@
 # Leaderboards API
 
-Running frontend application: https://leaderboads.skylords.eu
+Running frontend application: https://leaderboards.skylords.eu
 
 Running backend application: https://leaderboards.backend.skylords.eu
 
