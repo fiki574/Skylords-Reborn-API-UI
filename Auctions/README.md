@@ -9,7 +9,7 @@ Backend application caches new data every 10 minutes.
 ## GET `/api/auctions/export`
 
 - Exports all auctions to a CSV file
-- Caches new entries every 2 minutes
+- Caches new entries every 20 minutes
 
 ## POST `/api/auctions/count`
 
@@ -99,6 +99,7 @@ Backend application caches new data every 10 minutes.
   "natureOrbs": 0,
   "shadowOrbs": 0,
   "neutralOrbs": 0,
-  "cardType": "Frost"
+  "cardType": "Frost",
+  "affinity": "None"
 }
 ```
