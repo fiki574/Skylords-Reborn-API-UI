@@ -15,7 +15,7 @@ function PvPEntry({ type, data }: any) {
       <td>{Math.ceil(data.activity)}%</td>
       {type === "1v1" ? <td>{data.totalMatches}</td> : undefined}
       <td>{type === "1v1" ? data.winsLimited : data.wins}</td>
-      <td>{type === "1v1" ? data.losesLimited : data.losses}</td>
+      <td>{type === "1v1" ? data.lossesLimited : data.losses}</td>
     </tr>
   );
 }

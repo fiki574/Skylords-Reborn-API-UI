@@ -32,6 +32,16 @@ Backend application caches new data every 6 hours.
 }
 ```
 
+## GET `/api/last-load`
+
+- Retrieves time duration it took the server to cache all leaderboards
+- Example response:
+```json
+{
+  "duration": "15m35s"
+}
+```
+
 ## GET `/api/maps/:xpve`
 
 - Retrieves map list for specific PvE mode
