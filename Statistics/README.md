@@ -6,8 +6,6 @@ Running backend application: https://stats.backend.skylords.eu
 
 Backend application caches new data every minute.
 
-To retrieve statistics from the test server rather than the production one, append `/test` at the end of every URL.
-
 ## GET `/api/accounts`
 
 - Retrieves number of registered, in-game accounts
@@ -35,6 +33,16 @@ To retrieve statistics from the test server rather than the production one, appe
 ```json
 {
   "count": 18
+}
+```
+
+## GET `/api/matches/players`
+
+- Retrieves number of players in running matches
+- Example response:
+```json
+{
+  "count": 653
 }
 ```
 
@@ -98,6 +106,96 @@ To retrieve statistics from the test server rather than the production one, appe
 }
 ```
 
+## GET `/api/matches/1rpve`
+
+- Retrieves number of won 1-player Random PvE matches
+- Example response:
+```json
+{
+  "count": 12380
+}
+```
+
+## GET `/api/matches/2rpve`
+
+- Retrieves number of won 2-player Random PvE matches
+- Example response:
+```json
+{
+  "count": 6030
+}
+```
+
+## GET `/api/matches/4rpve`
+
+- Retrieves number of won 4-player Random PvE matches
+- Example response:
+```json
+{
+  "count": 2101
+}
+```
+
+## GET `/api/matches/1cpve`
+
+- Retrieves number of played 1-player Community PvE matches
+- Example response:
+```json
+{
+  "count": 48735
+}
+```
+
+## GET `/api/matches/2cpve`
+
+- Retrieves number of played 2-player Community PvE matches
+- Example response:
+```json
+{
+  "count": 13473
+}
+```
+
+## GET `/api/matches/4cpve`
+
+- Retrieves number of played 4-player Community PvE matches
+- Example response:
+```json
+{
+  "count": 1052
+}
+```
+
+## GET `/api/matches/c1v1`
+
+- Retrieves number of played 1v1 Community matches
+- Example response:
+```json
+{
+  "count": 25021
+}
+```
+
+## GET `/api/matches/c2v2`
+
+- Retrieves number of played 2v2 Community matches
+- Example response:
+```json
+{
+  "count": 7213
+}
+```
+
+## GET `/api/matches/c3v3`
+
+- Retrieves number of played 3v3 Community matches
+- Example response:
+```json
+{
+  "count": 902
+}
+```
+
 ## GET `/api/quests/active`
 
 - Retrieves number of active quests
@@ -108,6 +206,26 @@ To retrieve statistics from the test server rather than the production one, appe
 }
 ```
 
+## GET `/api/quests/completed`
+
+- Retrieves number of completed quests
+- Example response:
+```json
+{
+  "count": 9856
+}
+```
+
+## GET `/api/quests/rerolled`
+
+- Retrieves number of rerolled quests
+- Example response:
+```json
+{
+  "count": 15987
+}
+```
+
 ## GET `/api/auctions`
 
 - Retrieves number of live auctions
@@ -115,6 +233,16 @@ To retrieve statistics from the test server rather than the production one, appe
 ```json
 {
   "count": 1604
+}
+```
+
+## GET `/api/auctions/watchers`
+
+- Retrieves number of players watching auctions
+- Example response:
+```json
+{
+  "count": 1020
 }
 ```
 
@@ -148,6 +276,26 @@ To retrieve statistics from the test server rather than the production one, appe
 }
 ```
 
+## GET `/api/boosters/opened`
+
+- Retrieves number of opened boosters
+- Example response:
+```json
+{
+  "count": 120398
+}
+```
+
+## GET `/api/boosters/spent`
+
+- Retrieves sum of BFP spent on boosters by all players
+- Example response:
+```json
+{
+  "count": 2009834
+}
+```
+
 ## GET `/api/mails`
 
 - Retrieves number of sent in-game mails
@@ -175,6 +323,26 @@ To retrieve statistics from the test server rather than the production one, appe
 ```json
 {
   "count": 5160698
+}
+```
+
+## GET `/api/friendlist`
+
+- Retrieves number of players in friends lists
+- Example response:
+```json
+{
+  "count": 34932
+}
+```
+
+## GET `/api/mutelist`
+
+- Retrieves number of muted players
+- Example response:
+```json
+{
+  "count": 980
 }
 ```
 
@@ -215,5 +383,15 @@ To retrieve statistics from the test server rather than the production one, appe
 ```json
 {
   "count": 1152602300
+}
+```
+
+## GET `/api/scratch`
+
+- Retrieves number of used scratch codes
+- Example response:
+```json
+{
+  "count": 10092
 }
 ```
