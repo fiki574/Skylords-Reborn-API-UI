@@ -5,6 +5,7 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import PvEEntry from "./PvEEntry";
 import Alert from "./Alert";
+import { Col } from "react-bootstrap";
 
 function PvE({ type }: any) {
   const searchResults = [
@@ -59,9 +60,9 @@ function PvE({ type }: any) {
     let response = await fetch(
       `${
         process.env.REACT_APP_SRL_BE_ROOT_URL
-      }/api/leaderboards/pve-count/${type}/${player === 0 ? type : player}/${
-        map === 0 ? defMap : map
-      }/${timeRange}`
+      }/api/leaderboards/pve-count?type=${type}&players=${
+        player === 0 ? type : player
+      }&map=${map === 0 ? defMap : map}&month=${timeRange}`
     );
     let json = await response.json();
     if (json.state && json.state === "loading") {
@@ -71,9 +72,13 @@ function PvE({ type }: any) {
     }
 
     response = await fetch(
-      `${process.env.REACT_APP_SRL_BE_ROOT_URL}/api/leaderboards/pve/${type}/${
+      `${
+        process.env.REACT_APP_SRL_BE_ROOT_URL
+      }/api/leaderboards/pve?type=${type}&players=${
         player === 0 ? type : player
-      }/${map === 0 ? defMap : map}/${timeRange}/${page}/${resultsPerPage}`
+      }&map=${
+        map === 0 ? defMap : map
+      }&month=${timeRange}&page=${page}&number=${resultsPerPage}`
     );
     json = await response.json();
     if (json.state && json.state === "loading") {
@@ -110,7 +115,7 @@ function PvE({ type }: any) {
         json = await response.json();
         setDifficulties(json);
         response = await fetch(
-          `${process.env.REACT_APP_SRL_BE_ROOT_URL}/api/maps/${type}pve`
+          `${process.env.REACT_APP_SRL_BE_ROOT_URL}/api/maps?type=${type}`
         );
         json = await response.json();
         setMaps(json);
@@ -172,6 +177,24 @@ function PvE({ type }: any) {
     setPage(0);
   };
 
+  const handleExport = async () => {
+    let response = await fetch(
+      `${process.env.REACT_APP_SRL_BE_ROOT_URL}/api/leaderboards/pve?type=${type}&players=${playerCountRef.current.value}&map=${mapRef.current.value}&month=${timeRangeRef.current.value}&export=true`
+    );
+    let csvText = await response.text();
+    const element = document.createElement("a");
+    const file = new Blob([csvText], {
+      type: "text/csv",
+    });
+    element.href = URL.createObjectURL(file);
+    element.download = `sr-leaderboards-export-${type}PvE-${
+      parseInt(timeRangeRef.current.value) === 0 ? "this-month" : "last-month"
+    }-M${mapRef.current.value}-P${playerCountRef.current.value}.csv`;
+    document.body.appendChild(element);
+    element.click();
+    element.remove();
+  };
+
   return (
     <div className="container">
       <div className="row">
@@ -180,77 +203,90 @@ function PvE({ type }: any) {
           <Form>
             <Form.Group>
               <Form.Row>
-                <Form.Label>Results per page:</Form.Label>
-                <Form.Control
-                  as="select"
-                  ref={resultsPerPageRef}
-                  defaultValue={resultsPerPage}
-                >
-                  {Object.keys(searchResults).map((key) => (
-                    <option
-                      key={searchResults[key as any].value}
-                      value={searchResults[key as any].value}
-                    >
-                      {searchResults[key as any].name}
-                    </option>
-                  ))}
-                </Form.Control>
+                <Col>
+                  <Form.Label>Results per page:</Form.Label>
+                  <Form.Control
+                    as="select"
+                    ref={resultsPerPageRef}
+                    defaultValue={resultsPerPage}
+                  >
+                    {Object.keys(searchResults).map((key) => (
+                      <option
+                        key={searchResults[key as any].value}
+                        value={searchResults[key as any].value}
+                      >
+                        {searchResults[key as any].name}
+                      </option>
+                    ))}
+                  </Form.Control>
+                </Col>
+                <Col>
+                  <Form.Label>Time range:</Form.Label>
+                  <Form.Control
+                    as="select"
+                    ref={timeRangeRef}
+                    defaultValue={timeRange}
+                  >
+                    {Object.keys(timeRanges).map((key) => (
+                      <option
+                        key={timeRanges[key as any].value}
+                        value={timeRanges[key as any].value}
+                      >
+                        {timeRanges[key as any].name}
+                      </option>
+                    ))}
+                  </Form.Control>
+                </Col>
               </Form.Row>
               <Form.Row>
-                <Form.Label>Time range:</Form.Label>
-                <Form.Control
-                  as="select"
-                  ref={timeRangeRef}
-                  defaultValue={timeRange}
-                >
-                  {Object.keys(timeRanges).map((key) => (
-                    <option
-                      key={timeRanges[key as any].value}
-                      value={timeRanges[key as any].value}
-                    >
-                      {timeRanges[key as any].name}
-                    </option>
-                  ))}
-                </Form.Control>
-              </Form.Row>
-              <Form.Row>
-                <Form.Label>Map:</Form.Label>
-                <Form.Control as="select" ref={mapRef} defaultValue={map}>
-                  {Object.keys(maps).map((key) => (
-                    <option
-                      key={maps[key as any].value}
-                      value={maps[key as any].value}
-                    >
-                      {maps[key as any].name}
-                    </option>
-                  ))}
-                </Form.Control>
-              </Form.Row>
-              <Form.Row>
-                <Form.Label>Players:</Form.Label>
-                <Form.Control
-                  as="select"
-                  ref={playerCountRef}
-                  defaultValue={player}
-                >
-                  {Object.keys(players).map((key) => (
-                    <option
-                      key={players[key as any].value}
-                      value={players[key as any].value}
-                      selected={
-                        parseInt(players[key as any].value) === parseInt(type)
-                      }
-                    >
-                      {players[key as any].name}
-                    </option>
-                  ))}
-                </Form.Control>
+                <Col>
+                  <Form.Label>Map:</Form.Label>
+                  <Form.Control as="select" ref={mapRef} defaultValue={map}>
+                    {Object.keys(maps).map((key) => (
+                      <option
+                        key={maps[key as any].value}
+                        value={maps[key as any].value}
+                      >
+                        {maps[key as any].name}
+                      </option>
+                    ))}
+                  </Form.Control>
+                </Col>
+                <Col>
+                  <Form.Label>Players:</Form.Label>
+                  <Form.Control
+                    as="select"
+                    ref={playerCountRef}
+                    defaultValue={player}
+                  >
+                    {Object.keys(players).map((key) => (
+                      <option
+                        key={players[key as any].value}
+                        value={players[key as any].value}
+                        selected={
+                          parseInt(players[key as any].value) === parseInt(type)
+                        }
+                      >
+                        {players[key as any].name}
+                      </option>
+                    ))}
+                  </Form.Control>
+                </Col>
               </Form.Row>
               <Form.Row>
                 <Form.Label>Action:</Form.Label>
-                <Button variant="secondary" block onClick={handleNew}>
-                  Search
-                </Button>
+              </Form.Row>
+              <Form.Row>
+                <Col>
+                  <Button variant="secondary" block onClick={handleNew}>
+                    Search
+                  </Button>
+                </Col>
+                <Col>
+                  <Button variant="secondary" block onClick={handleExport}>
+                    Export
+                  </Button>
+                </Col>
               </Form.Row>
             </Form.Group>
           </Form>

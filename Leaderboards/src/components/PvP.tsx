@@ -5,6 +5,7 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import PvPEntry from "./PvPEntry";
 import Alert from "./Alert";
+import { Col } from "react-bootstrap";
 
 function PvP({ type }: any) {
   const searchResults = [
@@ -30,7 +31,7 @@ function PvP({ type }: any) {
 
   const handleSearch = async () => {
     let response = await fetch(
-      `${process.env.REACT_APP_SRL_BE_ROOT_URL}/api/leaderboards/pvp-count/${type}/${timeRange}`
+      `${process.env.REACT_APP_SRL_BE_ROOT_URL}/api/leaderboards/pvp-count?type=${type}&month=${timeRange}`
     );
     let json = await response.json();
     if (json.state && json.state === "loading") {
@@ -40,7 +41,7 @@ function PvP({ type }: any) {
     }
 
     response = await fetch(
-      `${process.env.REACT_APP_SRL_BE_ROOT_URL}/api/leaderboards/pvp/${type}/${timeRange}/${page}/${resultsPerPage}`
+      `${process.env.REACT_APP_SRL_BE_ROOT_URL}/api/leaderboards/pvp?type=${type}&month=${timeRange}&page=${page}&number=${resultsPerPage}`
     );
     json = await response.json();
     if (json.state && json.state === "loading") {
@@ -115,6 +116,24 @@ function PvP({ type }: any) {
     setPage(0);
   };
 
+  const handleExport = async () => {
+    let response = await fetch(
+      `${process.env.REACT_APP_SRL_BE_ROOT_URL}/api/leaderboards/pvp?type=${type}&month=${timeRangeRef.current.value}&export=true`
+    );
+    let csvText = await response.text();
+    const element = document.createElement("a");
+    const file = new Blob([csvText], {
+      type: "text/csv",
+    });
+    element.href = URL.createObjectURL(file);
+    element.download = `sr-leaderboards-export-${type}-${
+      parseInt(timeRangeRef.current.value) === 0 ? "this-month" : "last-month"
+    }.csv`;
+    document.body.appendChild(element);
+    element.click();
+    element.remove();
+  };
+
   return (
     <div className="container">
       <div className="row">
@@ -123,44 +142,55 @@ function PvP({ type }: any) {
           <Form>
             <Form.Group>
               <Form.Row>
-                <Form.Label>Results per page:</Form.Label>
-                <Form.Control
-                  as="select"
-                  ref={resultsPerPageRef}
-                  defaultValue={resultsPerPage}
-                >
-                  {Object.keys(searchResults).map((key) => (
-                    <option
-                      key={searchResults[key as any].value}
-                      value={searchResults[key as any].value}
-                    >
-                      {searchResults[key as any].name}
-                    </option>
-                  ))}
-                </Form.Control>
-              </Form.Row>
-              <Form.Row>
-                <Form.Label>Time range:</Form.Label>
-                <Form.Control
-                  as="select"
-                  ref={timeRangeRef}
-                  defaultValue={timeRange}
-                >
-                  {Object.keys(timeRanges).map((key) => (
-                    <option
-                      key={timeRanges[key as any].value}
-                      value={timeRanges[key as any].value}
-                    >
-                      {timeRanges[key as any].name}
-                    </option>
-                  ))}
-                </Form.Control>
+                <Col>
+                  <Form.Label>Results per page:</Form.Label>
+                  <Form.Control
+                    as="select"
+                    ref={resultsPerPageRef}
+                    defaultValue={resultsPerPage}
+                  >
+                    {Object.keys(searchResults).map((key) => (
+                      <option
+                        key={searchResults[key as any].value}
+                        value={searchResults[key as any].value}
+                      >
+                        {searchResults[key as any].name}
+                      </option>
+                    ))}
+                  </Form.Control>
+                </Col>
+                <Col>
+                  <Form.Label>Time range:</Form.Label>
+                  <Form.Control
+                    as="select"
+                    ref={timeRangeRef}
+                    defaultValue={timeRange}
+                  >
+                    {Object.keys(timeRanges).map((key) => (
+                      <option
+                        key={timeRanges[key as any].value}
+                        value={timeRanges[key as any].value}
+                      >
+                        {timeRanges[key as any].name}
+                      </option>
+                    ))}
+                  </Form.Control>
+                </Col>
               </Form.Row>
               <Form.Row>
                 <Form.Label>Action:</Form.Label>
-                <Button variant="secondary" block onClick={handleNew}>
-                  Search
-                </Button>
+              </Form.Row>
+              <Form.Row>
+                <Col>
+                  <Button variant="secondary" block onClick={handleNew}>
+                    Search
+                  </Button>
+                </Col>
+                <Col>
+                  <Button variant="secondary" block onClick={handleExport}>
+                    Export
+                  </Button>
+                </Col>
               </Form.Row>
             </Form.Group>
           </Form>

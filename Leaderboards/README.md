@@ -34,7 +34,7 @@ Backend application caches new data every 6 hours.
 
 ## GET `/api/last-load`
 
-- Retrieves time duration it took the server to cache all leaderboards
+- Retrieves time duration it took the server last time to cache all leaderboards
 - Example response:
 ```json
 {
@@ -42,11 +42,11 @@ Backend application caches new data every 6 hours.
 }
 ```
 
-## GET `/api/maps/:xpve`
+## GET `/api/maps`
 
 - Retrieves map list for specific PvE mode
-- Parameter `:xpve` represents a PvE mode, can have following values: `1pve`, `2pve`, `4pve`, `12pve`
-- Example request URL: `/api/maps/1pve`
+- Query parameter `type` represents a PvE mode and is required, can have following values: `1`, `2`, `4`, `12`
+- Example request URL: `/api/maps?type=1`
 - Example response:
 ```json
 [
@@ -91,38 +91,34 @@ Backend application caches new data every 6 hours.
 ]
 ```
 
-## GET `/api/leaderboards/pve-count/:type/:players/:map/:month`
+## GET `/api/leaderboards/pve-count`
 
-- Retrieves total number of PvE leaderboard entries according to path parameters
-- Parameter `:type` represents PvE mode, can have following values: `1`, `2`, `4`, `12`
-- Parameter `:players` represents player count in PvE mode, can have following values: `1`, `2`, `3`, `4`, `12`
-- Parameter `:map` represents map ID, matches the `value` returned by `GET /api/maps/:xpve` request
-- Parameter `:month` represents selected time range, matches the `value` returned by `GET /api/ranges` request
-- Example request URL: `/api/leaderboards/pve-count/1/1/67/0`
+- Retrieves total number of PvE leaderboard entries according to provided query parameters
+- Query parameter `type` represents PvE mode and is required, can have following values: `1`, `2`, `4`, `12`
+- Query parameter `players` represents player count in PvE mode and is required, can have following values: `1`, `2`, `3`, `4`, `12`
+- Query parameter `map` represents map ID and is required, matches the `value` returned by `GET /api/maps` request
+- Query parameter `month` represents selected time range and is required, matches the `value` returned by `GET /api/ranges` request
+- Example request URL: `/api/leaderboards/pve-count?type=1&players=1&map=67&month=0`
 - Example response:
 ```json
 {
   "count": 200
 }
 ```
-- Example response when the backend is caching new data:
-```json
-{
-  "state": "loading"
-}
-```
 
-## GET `/api/leaderboards/pve/:type/:players/:map/:month/:page/:number`
+## GET `/api/leaderboards/pve`
 
-- Retrieves paginated list of PvE leaderboard entries according to path parameters
-- Parameter `:type` represents PvE mode, can have following values: `1`, `2`, `4`, `12`
-- Parameter `:players` represents player count in PvE mode, can have following values: `1`, `2`, `3`, `4`, `12`
-- Parameter `:map` represents map ID, matches the `value` returned by `GET /api/maps/:xpve` request
-- Parameter `:month` represents selected time range, matches the `value` returned by `GET /api/ranges` request
-- Parameter `:page` can have value above 1, represents the page that we're loading data for
-- Parameter `:number` can have value up to maximum 30, represents total results per each page
+- Retrieves paginated list of PvE leaderboard entries or exports data to a CSV file, all according to provided query parameters
+- Query parameter `type` represents PvE mode and is required, can have following values: `1`, `2`, `4`, `12`
+- Query parameter `players` represents player count in PvE mode and is required, can have following values: `1`, `2`, `3`, `4`, `12`
+- Query parameter `map` represents map ID and is required, matches the `value` returned by `GET /api/maps` request
+- Query parameter `month` represents selected time range and is required, matches the `value` returned by `GET /api/ranges` request
+- Query parameter `export` triggers download of the exported leaderboards in CSV format and is optional, can have any value, mere presence is enough
+- Query parameter `page` can have value above 1 and is required only if query parameter `export` is not present, represents the page that we're loading data for
+- Query parameter `number` can have value up to maximum 30 and is required only if query parameter `export` is not present, represents total results per each page
 - Response parameter `time` is actually number of match steps, which needs to be divided by `10` in order to get number of seconds (10 steps = 1 second)
-- Example request URL: `/api/leaderboards/pve-count/1/1/67/0/1/15`
+- Example request URL: `/api/leaderboards/pve?type=1&players=1&map=67&month=0&page=1&number=15`
+- Example export request URL (returns `text/csv` data): `/api/leaderboards/pve?type=1&players=1&map=67&month=0&export=true`
 - Example response:
 ```json
 [
@@ -143,12 +139,12 @@ Backend application caches new data every 6 hours.
 ]
 ```
 
-## GET `/api/leaderboards/pvp-count/:type/:month`
+## GET `/api/leaderboards/pvp-count`
 
-- Retrieves total number of PvP leaderboard entries according to path parameters
-- Parameter `:type` represents PvP mode, can have following values: `1v1`, `2v2`
-- Parameter `:month` represents selected time range, matches the `value` returned by `GET /api/ranges` request
-- Example request URL: `/api/leaderboards/pvp-count/1v1/0`
+- Retrieves total number of PvP leaderboard entries according to provided query parameters
+- Query parameter `type` represents PvP mode and is required, can have following values: `1v1`, `2v2`
+- Query parameter `month` represents selected time range and is required, matches the `value` returned by `GET /api/ranges` request
+- Example request URL: `/api/leaderboards/pvp-count?type=1v1&month=0`
 - Example response:
 ```json
 {
@@ -156,14 +152,16 @@ Backend application caches new data every 6 hours.
 }
 ```
 
-## GET `/api/leaderboards/pvp/:type/:month/:page/:number`
+## GET `/api/leaderboards/pvp`
 
-- Retrieves paginated list of PvP leaderboard entries according to path parameters
-- Parameter `:type` represents PvE mode, can have following values: `1v1`, `2v2`
-- Parameter `:month` represents selected time range, matches the `value` returned by `GET /api/ranges` request
-- Parameter `:page` can have value above 1, represents the page that we're loading data for
-- Parameter `:number` can have value up to maximum 30, represents total results per each page
-- Example request URL: `/api/leaderboards/pvp/1v1/0/1/15`
+- Retrieves paginated list of PvP leaderboard entries or exports data to a CSV file, all according to provided query parameters
+- Query parameter `type` represents PvE mode and is required, can have following values: `1v1`, `2v2`
+- Query parameter `month` represents selected time range and is required, matches the `value` returned by `GET /api/ranges` request
+- Query parameter `export` triggers download of the exported leaderboards in CSV format and is optional, can have any value, mere presence is enough
+- Query parameter `page` can have value above 1 and is required only if query parameter `export` is not present, represents the page that we're loading data for
+- Query parameter `number` can have value up to maximum 30 and is required only if query parameter `export` is not present, represents total results per each page
+- Example request URL: `/api/leaderboards/pvp?type=1v1&month=0&page=1&number=15`
+- Example export request URL (returns `text/csv` data): `/api/leaderboards/pvp?type=1v1&month=0&export=true`
 - Example response:
 ```json
 [
@@ -187,7 +185,6 @@ Backend application caches new data every 6 hours.
   }
 ]
 ```
-
 - Additional example response for `2v2` leaderboards:
 ```json
 [
