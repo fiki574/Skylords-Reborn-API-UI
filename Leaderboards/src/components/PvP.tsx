@@ -121,6 +121,9 @@ function PvP({ type }: any) {
       `${process.env.REACT_APP_SRL_BE_ROOT_URL}/api/leaderboards/pvp?type=${type}&month=${timeRangeRef.current.value}&export=true`
     );
     let csvText = await response.text();
+    if (csvText === `{"state":"loading"}`) {
+      return;
+    }
     const element = document.createElement("a");
     const file = new Blob([csvText], {
       type: "text/csv",
