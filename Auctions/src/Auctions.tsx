@@ -78,37 +78,15 @@ function Auctions() {
   };
 
   const handleSearch = async () => {
-    let data = {
-      input: name,
-      min: minPrice,
-      max: maxPrice,
-    };
-
     let response = await fetch(
-      `${process.env.REACT_APP_SRA_BE_ROOT_URL}/api/auctions/count`,
-      {
-        method: "POST",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      }
+      `${process.env.REACT_APP_SRA_BE_ROOT_URL}/api/auctions/count?cardName=${name}&minBfpPrice=${minPrice}&maxBfpPrice=${maxPrice}`
     );
 
     let json = await response.json();
     setSearched(parseInt(json.count));
 
     response = await fetch(
-      `${process.env.REACT_APP_SRA_BE_ROOT_URL}/api/auctions/${page}/${resultsPerPage}`,
-      {
-        method: "POST",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      }
+      `${process.env.REACT_APP_SRA_BE_ROOT_URL}/api/auctions?cardName=${name}&minBfpPrice=${minPrice}&maxBfpPrice=${maxPrice}&page=${page}&number=${resultsPerPage}`
     );
 
     json = await response.json();
@@ -165,8 +143,6 @@ function Auctions() {
                     defaultValue={maxPrice}
                   />
                 </Col>
-              </Form.Row>
-              <Form.Row>
                 <Col>
                   <Form.Label>Results per page:</Form.Label>
                   <Form.Control
@@ -184,20 +160,22 @@ function Auctions() {
                     ))}
                   </Form.Control>
                 </Col>
+              </Form.Row>
+              <Form.Row>
                 <Col>
                   <Form.Label>Action:</Form.Label>
-                  <Form.Row>
-                    <Col>
-                      <Button variant="secondary" block onClick={handleNew}>
-                        Search
-                      </Button>
-                    </Col>
-                    <Col>
-                      <Button variant="secondary" block onClick={handleExport}>
-                        Export
-                      </Button>
-                    </Col>
-                  </Form.Row>
+                </Col>
+              </Form.Row>
+              <Form.Row>
+                <Col>
+                  <Button variant="secondary" block onClick={handleNew}>
+                    Search
+                  </Button>
+                </Col>
+                <Col>
+                  <Button variant="secondary" block onClick={handleExport}>
+                    Export
+                  </Button>
                 </Col>
               </Form.Row>
             </Form.Group>

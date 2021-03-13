@@ -277,7 +277,9 @@ function PvE({ type }: any) {
                 </Col>
               </Form.Row>
               <Form.Row>
-                <Form.Label>Action:</Form.Label>
+                <Col>
+                  <Form.Label>Action:</Form.Label>
+                </Col>
               </Form.Row>
               <Form.Row>
                 <Col>
